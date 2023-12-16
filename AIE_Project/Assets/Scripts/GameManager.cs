@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
 	void OnMessageReceived(BluetoothHelper helper)
 	{
         received_message = helper.Read();
-        Debug.Log(received_message);
+        // Debug.Log(received_message);
 
         try{
             string[] temp = received_message.Split(',');
