@@ -5,7 +5,6 @@
 #define BT_RXD 6
 #define BT_TXD 7
 
-
 #define S_NUMBER 3
 #define ARRAY_LENGTH 18
 
