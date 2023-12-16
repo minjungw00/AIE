@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class CubeColorChange : MonoBehaviour
@@ -22,6 +23,21 @@ public class CubeColorChange : MonoBehaviour
     public void ShuffleColor(){
         for(int i = 0; i < 6; ++i){
             guessColor[i] = Random.Range(0, 5);
+            curColor[i] = guessColor[i];
+        }
+        string str = "";
+        for(int i = 0; i < 6; ++i){
+            str += guessColor[i].ToString();
+        }
+        Debug.Log(str);
+    }
+
+    public void ShuffleGuessColor(){
+        for(int i = 0; i < 6; ++i){
+            do{
+                curColor[i] = Random.Range(0, 5);
+            }
+            while(guessColor[i] == curColor[i]);
         }
     }
 
@@ -34,10 +50,6 @@ public class CubeColorChange : MonoBehaviour
         }
     }
 
-    public void StartGame(){
-        ShuffleColor();
-    }
-
     public void GetState(){
         for(int i = 0; i < 6; ++i){
             preState[i] = curState[i];
@@ -46,15 +58,9 @@ public class CubeColorChange : MonoBehaviour
         for(int i = 0; i < 6; ++i){
             curState[i] = GameManager.instance.enc[i];
         }
-        // string str1 = preState[0].ToString() + preState[1].ToString() + preState[2].ToString() + preState[3].ToString() + preState[4].ToString() + preState[5].ToString();
-        // Debug.Log("Pre:" + str1);
-        // string str2 = curState[0].ToString() + curState[1].ToString() + curState[2].ToString() + curState[3].ToString() + curState[4].ToString() + curState[5].ToString();
-        // Debug.Log("Cur:" + str2);
     }
 
-    public void CheckState(){
-        string str = curColor[0].ToString() + curColor[1].ToString() + curColor[2].ToString() + curColor[3].ToString() + curColor[4].ToString() + curColor[5].ToString();
-        Debug.Log(str);
+    public void ChangeColor(){
         for(int i = 0; i < 6; ++i){
             if(preState[i] != curState[i]){
                 if(curState[i] == 1){
@@ -71,6 +77,23 @@ public class CubeColorChange : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool CompareColor(){
+        bool step = true;
+        for(int i = 0; i < 6; ++i){
+            for(int j = i; j < i + 6; ++j){
+                for(int k = 0; k < 6; ++k){
+                    if(curColor[k] != guessColor[(j + k) % 6]){
+                        step = false;
+                        break;
+                    } 
+                }
+                if(step) return true;
+                else step = true;
+            }
+        }
+        return false;
     }
 
     #endregion
@@ -100,15 +123,14 @@ public class CubeColorChange : MonoBehaviour
             }
         }
 
-        ShuffleColor();
-        curColor = guessColor;
+        ShuffleGuessColor();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         GetState();
-        CheckState();
+        ChangeColor();
         DrawColor();
     }
 
