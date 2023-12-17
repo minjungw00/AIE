@@ -28,7 +28,7 @@ public class manager : MonoBehaviour {
 			bluetoothHelper.OnDataReceived += OnMessageReceived; //read the data
 
             //bluetoothHelper.setFixedLengthBasedStream(3); //receiving every 3 characters together
-			bluetoothHelper.setTerminatorBasedStream(";"); //delimits received messages based on \n char
+			bluetoothHelper.setTerminatorBasedStream(","); //delimits received messages based on \n char
 			//if we received "Hi\nHow are you?"
 			//then they are 2 messages : "Hi" and "How are you?"
 
@@ -128,7 +128,7 @@ public class manager : MonoBehaviour {
 	//Asynchronous method to receive messages
 	void OnMessageReceived(BluetoothHelper helper)
 	{
-		//StartCoroutine(blinkSphere());
+		StartCoroutine(blinkSphere());
         received_message = helper.Read();
         Debug.Log(received_message);
 		text.text = received_message;
@@ -180,8 +180,9 @@ public class manager : MonoBehaviour {
 		if(bluetoothHelper.isConnected())
 		if(GUI.Button(new Rect(Screen.width/2-Screen.width/10, Screen.height/10, Screen.width/5, Screen.height/10), "Send text"))
 		{
-			bluetoothHelper.SendData(new Byte[] {0, 0, 85, 0, 85});
-            bluetoothHelper.SendData("This is a very long long long long text");
+			// bluetoothHelper.SendData(new Byte[] {0, 0, 85, 0, 85, 85});
+            bluetoothHelper.SendData("This is a very long long long long text;");
+			text.text = "Send!";
 		}
 	}
 

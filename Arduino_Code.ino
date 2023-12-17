@@ -1,3 +1,4 @@
+#include <Adafruit_NeoPixel.h>
 #include <SoftwareSerial.h>
 #include <ShiftIn.h>
 #include "Wire.h"
@@ -5,10 +6,20 @@
 #define BT_RXD 6
 #define BT_TXD 7
 
+//define NeoPixel Pin and Number of LEDs
+#define LED_PIN 13
+#define NUM_LEDS 96
+
 #define S_NUMBER 3
 #define ARRAY_LENGTH 18
 
+//create a NeoPixel ring
+Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+int ledCount = 0;
+
 SoftwareSerial BTSerial(BT_RXD, BT_TXD);
+String receivedText;
+char digits[6] = {0, 0, 0, 0, 0, 0};
 
 // Init ShiftIn instance with one chip.
 // The number in brackets defines the number of daisy-chained 74HC165 chips
@@ -157,6 +168,36 @@ void renewValues(){
   }
 }
 
+void TurnOnLEDS(){
+  ledCount = ++ledCount % 16;
+
+  for(int i = 0; i < 6; ++i){
+    for(int j = 0; j < 2; ++j){
+      for(int k = 0; k < 8; ++k){
+        if(digits[i] == 0){       // RED
+          ring.setPixelColor(i * 16 + j * 8 + (ledCount + k) % 16, (255 / 8 * k), 0, 0);
+        }
+        else if(digits[i] == 1){  // ORANGE
+          ring.setPixelColor(i * 16 + j * 8 + (ledCount + k) % 16, (255 / 8 * k), (127 / 8 * k), 0);
+        }
+        else if(digits[i] == 2){  // YELLOW
+          ring.setPixelColor(i * 16 + j * 8 + (ledCount + k) % 16, (255 / 8 * k), (255 / 8 * k), 0);
+        }
+        else if(digits[i] == 3){  // GREEN
+          ring.setPixelColor(i * 16 + j * 8 + (ledCount + k) % 16, 0, (255 / 8 * k), 0);
+        }
+        else if(digits[i] == 4){  // BLUE
+          ring.setPixelColor(i * 16 + j * 8 + (ledCount + k) % 16, 0, 0, (255 / 8 * k));
+        }
+      }
+    }
+  }
+
+  ring.show();
+  delay(80);
+}
+
+
 void loop() {
   gyroReadData(0x3B);
   if(shift.update()){
@@ -164,14 +205,29 @@ void loop() {
   }
   sendValues();
   renewValues();
-  
+
   if(BTSerial.available()){
-    Serial.println("Y");
-    Serial.write(BTSerial.read());
+    receivedText = BTSerial.readStringUntil('\n');
+    for(int i = 0; i < 6; ++i){
+      digits[i] = receivedText.charAt(i);
+    }
+
+    for(int i = 0; i < 6; ++i){
+      Serial.print(digits[i]);
+    }
+    Serial.println();
   }
+
+  
   if(Serial.available()){
-    Serial.println("N");
     BTSerial.write(Serial.read());
   }
-  //delay(100);
+  if(BTSerial.available()){
+    Serial.write(BTSerial.read());
+  }
+  
+}
+
+void processReceivedData(String str) {
+  Serial.println(str);
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -22,7 +23,7 @@ public class CubeColorChange : MonoBehaviour
 
     public void ShuffleColor(){
         for(int i = 0; i < 6; ++i){
-            guessColor[i] = Random.Range(0, 5);
+            guessColor[i] = UnityEngine.Random.Range(0, 5);
             curColor[i] = guessColor[i];
         }
         string str = "";
@@ -35,7 +36,7 @@ public class CubeColorChange : MonoBehaviour
     public void ShuffleGuessColor(){
         for(int i = 0; i < 6; ++i){
             do{
-                curColor[i] = Random.Range(0, 5);
+                curColor[i] = UnityEngine.Random.Range(0, 5);
             }
             while(guessColor[i] == curColor[i]);
         }
@@ -60,16 +61,19 @@ public class CubeColorChange : MonoBehaviour
         }
     }
 
-    public void ChangeColor(){
+    public bool ChangeColor(){
+        bool isChange = false;
         for(int i = 0; i < 6; ++i){
             if(preState[i] != curState[i]){
                 if(curState[i] == 1){
+                    isChange = true;
                     --curColor[i];
                     if(curColor[i] == -1){
                         curColor[i] = 4;
                     }
                 }
                 else if(curState[i] == 2){
+                    isChange = true;
                     ++curColor[i];
                     if(curColor[i] == 5){
                         curColor[i] = 0;
@@ -77,6 +81,7 @@ public class CubeColorChange : MonoBehaviour
                 }
             }
         }
+        return isChange;
     }
 
     public bool CompareColor(){
@@ -95,6 +100,14 @@ public class CubeColorChange : MonoBehaviour
         }
         return false;
     }
+
+    public IEnumerator SendColorData() {
+    for (int i = 0; i < curColor.Length; i++) {
+        byte[] colorByte = new byte[] { (byte)curColor[i] };
+        GameManager.instance.bluetoothHelper.SendData(colorByte);
+        yield return new WaitForSeconds(0.1f); // 0.1초 지연
+    }
+}
 
     #endregion
 
@@ -124,6 +137,7 @@ public class CubeColorChange : MonoBehaviour
         }
 
         ShuffleGuessColor();
+        StartCoroutine(SendColorData());
     }
 
     // Update is called once per frame

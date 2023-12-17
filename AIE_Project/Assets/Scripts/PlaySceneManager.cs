@@ -77,6 +77,11 @@ public class PlaySceneManager : MonoBehaviour
         return false;
     }
 
+    public void Shuffle(){
+        cube.GetComponent<CubeColorChange>().ShuffleGuessColor();
+        StartCoroutine(cube.GetComponent<CubeColorChange>().SendColorData());
+    }
+
     #endregion
 
 

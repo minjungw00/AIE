@@ -94,11 +94,13 @@ public class GameManager : MonoBehaviour
         received_message = helper.Read();
         // Debug.Log(received_message);
 
+        
         try{
             string[] temp = received_message.Split(',');
-            gyro = new Vector3(int.Parse(temp[0]), int.Parse(temp[1]), int.Parse(temp[2]));
+            gyro = new Vector3(-int.Parse(temp[0]), -int.Parse(temp[2]), -int.Parse(temp[1])); // 각도 보정
             for(int i = 0; i < 6; ++i){
-                enc[i] = int.Parse(temp[3 + i]);
+                // enc[i] = int.Parse(temp[3 + i]);
+                enc[i] = 3;
             }
         }
         catch{
