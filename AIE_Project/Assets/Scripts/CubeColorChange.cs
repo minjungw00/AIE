@@ -4,6 +4,16 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+/*
+큐브 색상 관련 스크립트
+
+큐브의 색상을 관리하며 다음 기능을 포함함
+- 무작위로 큐브의 색상을 섞음
+- 로터리 엔코더의 입력에 따라 큐브의 색상 변경
+- 현재 색상 데이터를 GameManager를 통해 아두이노로 전송
+- 큐브의 색상이 제시된 색상과 일치하는지 비교
+*/
+
 public class CubeColorChange : MonoBehaviour
 {
     #region Properties & Variables
@@ -61,6 +71,8 @@ public class CubeColorChange : MonoBehaviour
         }
     }
 
+    // 큐브 색상 일치 확인
+    // 임의의 회전 상태에서 큐브의 색상이 일치해야 함
     public bool ChangeColor(){
         bool isChange = false;
         for(int i = 0; i < 6; ++i){
@@ -101,6 +113,8 @@ public class CubeColorChange : MonoBehaviour
         return false;
     }
 
+    // 큐브 색상 데이터를 아두이노로 보내기
+    // 데이터 로직 문제로 비정상 작동
     public IEnumerator SendColorData() {
     for (int i = 0; i < curColor.Length; i++) {
         byte[] colorByte = new byte[] { (byte)curColor[i] };

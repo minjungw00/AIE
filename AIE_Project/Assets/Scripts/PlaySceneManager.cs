@@ -4,6 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/*
+메인 게임 메커니즘 관련 스크립트
+
+GameState
+Idle : 기본 상태
+Memorise : 아두이노 로터리 엔코더의 버튼이 입력되면 색상 암기 모드로 전환해 색을 섞고,
+            플레이어는 지정된 시간동안 큐브의 색상을 암기함
+Solve : 아두이노의 로터리 엔코더의 다이얼을 조절해 주어진 색상을 맞추면 성공
+        이후 Idle로 전환하면서 점수(해결한 시간)를 출력
+*/
+
 public class PlaySceneManager : MonoBehaviour
 {
     #region Properties and Variables

@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+큐브 회전 관련 스크립트
+
+자이로센서의 값을 통해 큐브의 회전값 설정
+*/
+
 public class CubeRotation : MonoBehaviour
 {
     public Vector3 rot;

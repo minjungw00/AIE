@@ -3,9 +3,19 @@
 #include <ShiftIn.h>
 #include "Wire.h"
 
+
+// 블루투스 관련 설정
 #define BT_RXD 6
 #define BT_TXD 7
 
+SoftwareSerial BTSerial(BT_RXD, BT_TXD);
+String receivedText;
+char digits[6] = {0, 0, 0, 0, 0, 0};
+int colors[6] = {0, 0, 0, 0, 0, 0};
+int c = 0;
+
+
+// 네오픽셀 LED링 관련 설정
 //define NeoPixel Pin and Number of LEDs
 #define LED_PIN 13
 #define NUM_LEDS 96
@@ -17,10 +27,8 @@
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 int ledCount = 0;
 
-SoftwareSerial BTSerial(BT_RXD, BT_TXD);
-String receivedText;
-char digits[6] = {0, 0, 0, 0, 0, 0};
 
+// 시프트 레지스터 및 로터리 엔코더 관련 설정
 // Init ShiftIn instance with one chip.
 // The number in brackets defines the number of daisy-chained 74HC165 chips
 // So if you are using two chips, you would write: ShiftIn<2> shift;
@@ -71,6 +79,7 @@ void setup() {
   // Serial.println("MPU6050 started");
 }
 
+// 자이로센서 데이터 각도를 Degree로 변환
 void gyroConvertRawDataToAngle(int16_t AcX, int16_t AcY, int16_t AcZ) {
   int minVal = 265; int maxVal = 402;
   int xAng = map(AcX, minVal, maxVal, -90, 90);
@@ -92,6 +101,7 @@ void gyroConvertRawDataToAngle(int16_t AcX, int16_t AcY, int16_t AcZ) {
   BTSerial.print(",");
 }
 
+// 자이로센서 데이터 읽기
 void gyroReadData(int8_t register_address) {
 
   int bytesReceived = -1;
@@ -161,13 +171,15 @@ void checkValues(){
   }
 }
 
-// 입력값 갱신
+// 시프트 레지스터 입력값 갱신
 void renewValues(){
   for(int i = 0; i < ARRAY_LENGTH; ++i){
     preEnc[i] = curEnc[i];
   }
 }
 
+// 입력받은 색상 정보를 통해 LED링 색상 변경
+// 미사용
 void TurnOnLEDS(){
   ledCount = ++ledCount % 16;
 
@@ -199,33 +211,29 @@ void TurnOnLEDS(){
 
 
 void loop() {
+  // 자이로센서 데이터 받기
   gyroReadData(0x3B);
+
+  // 시프트 레지스터 입력 받기
   if(shift.update()){
     checkValues();
   }
   sendValues();
   renewValues();
 
-  if(BTSerial.available()){
-    receivedText = BTSerial.readStringUntil('\n');
+  // 유니티에서 아두이노로 데이터 입력
+  // 입력 데이터 로직 문제로 구현 비정상 작동
+  // 유니티와 아두이노의 입력 신호 주기 차이가 문제일 것으로 추측
+  if (BTSerial.available()) {
     for(int i = 0; i < 6; ++i){
-      digits[i] = receivedText.charAt(i);
+      byte colorValue = BTSerial.read();
+      Serial.println(colorValue);
     }
-
-    for(int i = 0; i < 6; ++i){
-      Serial.print(digits[i]);
-    }
-    Serial.println();
   }
-
   
   if(Serial.available()){
     BTSerial.write(Serial.read());
   }
-  if(BTSerial.available()){
-    Serial.write(BTSerial.read());
-  }
-  
 }
 
 void processReceivedData(String str) {

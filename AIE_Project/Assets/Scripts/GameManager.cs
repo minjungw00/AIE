@@ -6,6 +6,13 @@ using ArduinoBluetoothAPI;
 using System;
 using System.Text;
 
+/*
+게임 매니저 스크립트
+
+싱글톤 패턴으로 전체 게임을 관리하고
+블루투스를 통해 아두이노와의 데이터 입출력을 관리
+*/
+
 public class GameManager : MonoBehaviour
 {
     #region Propertices & Variables
@@ -97,10 +104,14 @@ public class GameManager : MonoBehaviour
         
         try{
             string[] temp = received_message.Split(',');
-            gyro = new Vector3(-int.Parse(temp[0]), -int.Parse(temp[2]), -int.Parse(temp[1])); // 각도 보정
+            // 자이로센서 데이터 추출
+            // 아두이노 전원 연결 시 자이로센서의 상태에 따라 회전값의 초기 설정이 달라져 보정 필요
+            gyro = new Vector3(-int.Parse(temp[0]), -int.Parse(temp[2]), -int.Parse(temp[1]));
+
+            // 로터리 엔코더 데이터 추출
             for(int i = 0; i < 6; ++i){
                 // enc[i] = int.Parse(temp[3 + i]);
-                enc[i] = 3;
+                enc[i] = 3; // 로터리 엔코더가 동작하지 않아 게임 메커니즘 확인을 위해 임의 설정
             }
         }
         catch{

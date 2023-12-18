@@ -6,6 +6,12 @@ using ArduinoBluetoothAPI;
 using System;
 using System.Text;
 
+/*
+아두이노 블루투스 연결 예제
+
+게임 내 미사용, 통신 관리 기능은 GameManager.cs로 이전
+*/
+
 public class ArduinoManager : MonoBehaviour {
 
 	#region Propertices & Variables
