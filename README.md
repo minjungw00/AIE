@@ -6,6 +6,8 @@
 
 디지털 컨텐츠를 구현하여 하드웨어와 양방향 인터렉션이 가능한 인터렉티브 오브젝트 제작
 
+결과물 보고서 : https://sites.google.com/view/cau-artech/3-2/%ED%94%BC%EC%A7%80%EC%BB%AC%EC%BB%B4%ED%93%A8%ED%8C%85%EA%B3%BC-%EC%A0%9C%EC%96%B4/2023/a-i-e
+
 
 # AIE_Project
 
